@@ -45,13 +45,12 @@ for(i in 1:length(samples)){
         object_list[[i]]@meta.data$tests <- tests[i]
         object_list[[i]]@meta.data$conditions <- conditions[i]
         object_list[[i]]@meta.data$projects <- projects[i]
-        object_list[[i]]@meta.data$notes <- notes[i]
-        object_list[[i]]@meta.data$tissues <- tissues[i]
+        object_list[[i]]@meta.data$cell.lines <- tissues[i]
         
 }
 # we will take the union of the top 1k variable genes in each dataset for alignment
 genes.use <- object_list %>% 
-        lapply(function(object) head(rownames(object@hvg.info), 500)) %>%
+        lapply(function(object) head(rownames(object@hvg.info), 600)) %>%
         unlist %>% unique
 length(genes.use)
 
@@ -69,11 +68,11 @@ object@meta.data$percent.mito = object@meta.data$pct_counts_Mito/100
 meta.data = object@meta.data[,-seq(remove[1], remove[2], by=1)]
 object@meta.data = meta.data 
 
-(load(file = paste0("output/20190128/g1_24_20190128.Rda")))
+(load(file = paste0("output/20190214/g1_12_20190214.Rda")))
 
 object <- FilterCells(object = object, subset.names = c("nGene","nUMI","percent.mito"),
-                   low.thresholds = c(500,800, -Inf), 
-                   high.thresholds = c(Inf,Inf, 0.5))
+                   low.thresholds = c(1000,3000, -Inf), 
+                   high.thresholds = c(Inf,Inf, 0.15))
 
 object@ident = factor(object@ident,levels = samples)
 g2 <- lapply(c("nGene", "nUMI", "percent.mito"), function(features){
@@ -81,32 +80,32 @@ g2 <- lapply(c("nGene", "nUMI", "percent.mito"), function(features){
                 point.size.use = 0.2,size.x.use = 10, group.by = "ident",
                 x.lab.rot = T, do.return = T)
 })
-save(g2,file= paste0(path,"g2_24_20190128.Rda"))
+save(g2,file= paste0(path,"g2_12_20190214.Rda"))
 
 jpeg(paste0(path,"/S1_nGene.jpeg"), units="in", width=10, height=7,res=600)
 print(plot_grid(g1[[1]]+ggtitle("nGene in raw data")+ 
-                        scale_y_log10(limits = c(100,10000)),
+                        scale_y_log10(limits = c(800,10000)),
                 g2[[1]]+ggtitle("nGene after filteration")+ 
-                        scale_y_log10(limits = c(100,10000))))
+                        scale_y_log10(limits = c(800,10000))))
 dev.off()
 jpeg(paste0(path,"/S1_nUMI.jpeg"), units="in", width=10, height=7,res=600)
 print(plot_grid(g1[[2]]+ggtitle("nUMI in raw data")+ 
-                        scale_y_log10(limits = c(500,100000)),
+                        scale_y_log10(limits = c(2000,100000)),
                 g2[[2]]+ggtitle("nUMI after filteration")+ 
-                        scale_y_log10(limits = c(500,100000))))
+                        scale_y_log10(limits = c(2000,100000))))
 dev.off()
 jpeg(paste0(path,"/S1_mito.jpeg"), units="in", width=10, height=7,res=600)
 print(plot_grid(g1[[3]]+ggtitle("mito % in raw data")+ 
-                        ylim(c(0,1)),
+                        ylim(c(0,0.5)),
                 g2[[3]]+ggtitle("mito % after filteration")+ 
-                        ylim(c(0,1))))
+                        ylim(c(0,0.5))))
 dev.off()
 #======1.5 FindVariableGenes=======================
 object <- NormalizeData(object = object)
 jpeg(paste0(path,"/S1_dispersion.jpeg"), units="in", width=10, height=7,res=600)
 object <- FindVariableGenes(object = object, mean.function = ExpMean, 
                             dispersion.function = LogVMR, do.plot = T, 
-                            x.low.cutoff = 0.1, x.high.cutoff = 8, y.cutoff = 0.5)
+                            x.low.cutoff = 0.025, x.high.cutoff = 8, y.cutoff = 0.5)
 dev.off()
 length(object@var.genes)
 table(object@var.genes %in% genes.use)
