@@ -100,4 +100,4 @@ g1 <- lapply(c("nGene", "nUMI", "percent.mito"), function(features){
                 point.size.use = 0.2,size.x.use = 10, group.by = "ident",
                 x.lab.rot = T, do.return = T)
         })
-save(g1,file= paste0(path,"g1","_",length(sample_n),"_",gsub("-","",Sys.Date()),".Rda"))
+save(g1,file= paste0("output/","g1","_",length(sample_n),"_",gsub("-","",Sys.Date()),".Rda"))

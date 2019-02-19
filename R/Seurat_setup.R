@@ -68,7 +68,7 @@ object@meta.data$percent.mito = object@meta.data$pct_counts_Mito/100
 meta.data = object@meta.data[,-seq(remove[1], remove[2], by=1)]
 object@meta.data = meta.data 
 
-(load(file = paste0("output/20190214/g1_12_20190214.Rda")))
+(load(file= paste0("output/","g1","_",length(sample_n),"_",gsub("-","",Sys.Date()),".Rda")))
 
 object <- FilterCells(object = object, subset.names = c("nGene","nUMI","percent.mito"),
                    low.thresholds = c(1000,3000, -Inf), 
@@ -80,7 +80,7 @@ g2 <- lapply(c("nGene", "nUMI", "percent.mito"), function(features){
                 point.size.use = 0.2,size.x.use = 10, group.by = "ident",
                 x.lab.rot = T, do.return = T)
 })
-save(g2,file= paste0(path,"g2_12_20190214.Rda"))
+save(g2,file= paste0("output/","g2","_",length(sample_n),"_",gsub("-","",Sys.Date()),".Rda"))
 
 jpeg(paste0(path,"/S1_nGene.jpeg"), units="in", width=10, height=7,res=600)
 print(plot_grid(g1[[1]]+ggtitle("nGene in raw data")+ 
@@ -124,7 +124,7 @@ object@meta.data$S.Score = object@meta.data$S.Score - min(object@meta.data$S.Sco
 object@meta.data$G2M.Score = object@meta.data$G2M.Score - min(object@meta.data$G2M.Score)
 tail(x = object@meta.data)
 
-
+GC();GC();GC();GC();GC();GC();GC();GC();GC();GC();GC();
 #======1.6 PCA =========================
 object %<>% ScaleData %>%
         RunPCA(pc.genes = object@var.genes, pcs.compute = 50, do.print = F)
@@ -202,6 +202,8 @@ jpeg(paste0(path,"/TSNEplot-Harmony.jpeg"), units="in", width=10, height=7,res=6
 print(g_Harmony)
 dev.off()
 
-saveRDS(object@scale.data, file = "data/MCL.scale.data_Harmony_24_20190128.rds")
+saveRDS(object@scale.data, file = "data/Glioblastoma.scale.data_12_20190214.rds")
 object@scale.data = NULL; GC()
-save(object, file = "data/MCL_Harmony_24_20190128.Rda")
+save(object, file = "data/Glioblastoma_12_20190214.Rda")
+
+
