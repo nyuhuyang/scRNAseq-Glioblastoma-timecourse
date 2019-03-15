@@ -35,28 +35,32 @@ tissues <- df_samples$tissue[sample_n]
 tests <- df_samples$tests[sample_n] 
 
 # Doheatmap for Normal / MCL ================
-table(object@meta.data$cell.lines)
+table(object@meta.data$conditions)
 object@meta.data$orig.ident = gsub("D21","D28",object@meta.data$orig.ident)
 object@meta.data$conditions = gsub("D21","D28",object@meta.data$conditions)
 object@meta.data$cell.lines = gsub("GSC","",object@meta.data$cell.lines)
-object %<>% SetAllIdent(id="orig.ident")
-Split_object <- SplitSeurat(object, split.by = "cell.lines")
+object@meta.data$orig.ident = gsub("-","_",object@meta.data$orig.ident)
+object %<>% SetAllIdent(id="conditions")
+Split_object <- SplitSeurat(object, split.by = "conditions")
 names(Split_object)
 
-dent.1 = c("D0","D0","D14","D14")
-dent.2 = c("D28","D14","D28","D16")
+dent.1 = c("923","827","923")
+dent.2 = c("827","NSC","NSC")
 
-for(cell.line in c("827","923","NSC")){
-
-        #---FindAllMarkers.UMI----
-        paste0(cell.line, "-", dent.1)
-        gde.markers <- FindPairMarkers(Split_object[[cell.line]], 
-                                       ident.1 = paste0(cell.line, "-", dent.1), 
-                                       ident.2 = paste0(cell.line, "-", dent.2),
-                                       logfc.threshold = 0.25,min.cells.group =3,
-                                       return.thresh = 0.05)
-        write.csv(gde.markers, paste0(path,cell.line,".csv"))
-        (mito.genes <- grep(pattern = "^MT-", x = gde.markers$gene))
-        if(length(mito.genes)>0) gde.markers = gde.markers[-mito.genes,]
-        GC();GC();GC();GC();GC();GC();GC();GC();
+for(n in names(Split_object)){
+        Split_object[[n]] %<>% SetAllIdent(id="orig.ident")
+        gde.markers <- FindPairMarkers(Split_object[[n]], 
+                                       ident.1 = paste(dent.1, n, sep="_"), 
+                                       ident.2 = paste(dent.2, n, sep="_"),
+                                       only.pos = FALSE,
+                                       logfc.threshold = 0.1,min.cells.group =2,
+                                       return.thresh = 0.05,
+                                       save.path = paste0(path,n,"/"))
+        GC();GC()
+        all.markers <- FindAllMarkers.UMI(Split_object[[n]],
+                                           only.pos = FALSE,
+                                           logfc.threshold = 0.1,min.cells.group =2,
+                                           return.thresh = 0.05)
+        write.csv(all.markers,file = paste0(path,n,"/all_cell_lines_in_",n,".csv"))
+        GC();GC()
 }
