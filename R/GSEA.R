@@ -28,7 +28,7 @@ for(d in c("827","923")){
 }
 
 # Run GSEA and generate reports
-#'@example ReportGSEA(file = "h.all.NSC-D0.NSC-D14.NSC-D16.NSC-D28.Gsea.1552583337620")
+#'@example ReportGSEA(file = "c5.all.827-D14.827-D16.827-D28.827-D0.Gsea.1552707417126",pos=T,ncol=3)
 ReportGSEA <- function(file, pos=T,ncol = 3){
         (gsea_path <- paste("~/gsea_home/output",tolower(format(Sys.Date(), "%b%d")),
                             file,sep ='/'))
@@ -51,4 +51,4 @@ ReportGSEA <- function(file, pos=T,ncol = 3){
                     paste0(path,file,"-",p,".jpeg"))
         
 }
-ReportGSEA(file = "h.all.923-D14.923-D16.923-D28.Gsea.1552621315022",pos=F,ncol=2)
+ReportGSEA(file = "c5.all.827-D14.827-D16.827-D28.827-D0.Gsea.1552707417126",pos=T,ncol=3)
