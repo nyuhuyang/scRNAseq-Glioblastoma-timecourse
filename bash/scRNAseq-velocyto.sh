@@ -3,7 +3,7 @@
 #SBATCH --partition=panda   # cluster-specific
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --output=scRNAseq-velocyto.txt
+#SBATCH --output=scRNAseq-velocyto_${SLURM_ARRAY_TASK_ID}.txt
 #SBATCH --job-name=scRNAseq-velocyto
 #SBATCH --mem=80G   # memory requested, units available: K,M,G,T
 
