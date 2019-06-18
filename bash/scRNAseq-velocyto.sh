@@ -3,21 +3,21 @@
 #SBATCH --partition=panda   # cluster-specific
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --output=scRNAseq-velocyto_${SLURM_ARRAY_TASK_ID}.txt
+#SBATCH --output=scRNAseq-velocyto.txt
 #SBATCH --job-name=scRNAseq-velocyto
 #SBATCH --mem=80G   # memory requested, units available: K,M,G,T
 
-spack load -r python@3.6.0
+spack load -r python@3.6.0+shared~tk~ucs4
 spack load -r samtools@1.8
-spack load -r zlib@1.2.11
-spack load -r openssl@1
+spack load -r zlib@1.2.11+optimize+pic+shared%gcc@6.3.0
+spack load -r openssl@1.0.2n+systemcerts%gcc@6.3.0 arch=linux-centos7-x86_64
 
 samtools --version
 echo $SLURM_ARRAY_TASK_ID
 #---------------------Variables to be set-------------------------#
-PROJECT_NAME="scRNAseq-Lung"
+PROJECT_NAME="scRNAseq-Glioblastoma-timecourse"
 path=/athena/elementolab/scratch/yah2014/Projects/${PROJECT_NAME}/data/bam
-file_folder=$(ls ${path} | tail -n +${SLURM_ARRAY_TASK_ID}| head -1) # Uses job array for each sample in the folder
+file_folder=$(ls ${path} | tail -n +$SLURM_ARRAY_TASK_ID| head -1) # Uses job array for each sample in the folder
 file="${file_folder}.bam" # add .bam
 rmsk_gtf=/athena/elementolab/scratch/yah2014/Indexed_genome/hg19_rmsk.gtf
 genes_gtf=/athena/elementolab/scratch/yah2014/Indexed_genome/refdata-cellranger-hg19-3.0.0/genes/genes.gtf

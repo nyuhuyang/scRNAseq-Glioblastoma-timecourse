@@ -205,5 +205,3 @@ dev.off()
 saveRDS(object@scale.data, file = "data/Glioblastoma.scale.data_12_20190214.rds")
 object@scale.data = NULL; GC()
 save(object, file = "data/Glioblastoma_12_20190214.Rda")
-
-
